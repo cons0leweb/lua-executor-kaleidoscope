@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import CodeEditor from '@/components/CodeEditor';
 import ScriptLibrary from '@/components/ScriptLibrary';
@@ -8,44 +8,132 @@ import SettingsPanel from '@/components/SettingsPanel';
 import { Settings, Upload, Download, Play, FileText, Menu, X, Home, Info, Rocket } from 'lucide-react';
 import { toast } from "sonner";
 
+// Mock function to simulate actual script execution
+// In a real production environment, this would communicate with a Roblox API
+const executeRobloxScript = (script: string): Promise<{ success: boolean; message: string }> => {
+  return new Promise((resolve) => {
+    // Simulate API call delay
+    setTimeout(() => {
+      // Check for error keywords to simulate different execution results
+      if (script.includes("error") || script.includes("fail")) {
+        resolve({ 
+          success: false, 
+          message: script.includes("error") ? "Syntax error" : "Execution failed" 
+        });
+      } else {
+        resolve({ 
+          success: true, 
+          message: "Script executed successfully!" 
+        });
+      }
+    }, 500);
+  });
+};
+
 const Index = () => {
-  const [consoleMessages, setConsoleMessages] = useState<{ text: string; type: 'info' | 'error' | 'success' }[]>([
-    { text: "EasyExploits initialized successfully", type: 'info' },
-    { text: "System ready", type: 'success' },
-  ]);
+  const [consoleMessages, setConsoleMessages] = useState<{ text: string; type: 'info' | 'error' | 'success' }[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [currentScript, setCurrentScript] = useState<string>('-- Enter your Lua script here\n\nprint("Hello, Roblox!")\n');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [isAttached, setIsAttached] = useState(false);
 
-  const handleExecute = (code: string) => {
+  // Check if auto-attach is enabled and attach on component mount
+  useEffect(() => {
+    // Initialize console
+    setConsoleMessages([
+      { text: "Executor initialized successfully", type: 'info' },
+      { text: "System ready", type: 'success' },
+    ]);
+
+    // Load settings and check if auto-attach is enabled
+    try {
+      const savedSettings = localStorage.getItem('executor-settings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        if (settings.autoAttach) {
+          handleAttach();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to parse settings:', error);
+    }
+  }, []);
+
+  const handleAttach = () => {
+    // Simulate attaching to Roblox
+    setConsoleMessages(prev => [
+      ...prev, 
+      { text: "Attaching to Roblox...", type: 'info' }
+    ]);
+
+    // Simulate a delay for attaching
+    setTimeout(() => {
+      setIsAttached(true);
+      setConsoleMessages(prev => [
+        ...prev,
+        { text: "Successfully attached to Roblox!", type: 'success' }
+      ]);
+      toast.success("Successfully attached to Roblox");
+    }, 1000);
+  };
+
+  const handleExecute = async (code: string) => {
+    if (!isAttached) {
+      toast.error("Not attached to Roblox");
+      setConsoleMessages(prev => [
+        ...prev, 
+        { text: "Error: Not attached to Roblox. Please attach first.", type: 'error' }
+      ]);
+      return;
+    }
+
+    if (isExecuting) {
+      toast.error("Already executing a script");
+      return;
+    }
+
     setCurrentScript(code);
-    // Simulate script execution
+    setIsExecuting(true);
+    
+    // Add execution message to console
     setConsoleMessages(prev => [
       ...prev, 
       { text: "Executing script...", type: 'info' }
     ]);
     
-    // Simulate a delay for execution
-    setTimeout(() => {
-      // Check if the script contains certain keywords to simulate different results
-      if (code.includes("error") || code.includes("fail")) {
+    try {
+      // Execute the script
+      const result = await executeRobloxScript(code);
+      
+      if (result.success) {
         setConsoleMessages(prev => [
           ...prev,
-          { text: "Error executing script: " + (code.includes("error") ? "Syntax error" : "Execution failed"), type: 'error' }
+          { text: result.message, type: 'success' }
         ]);
-        toast.error("Script execution failed");
+        toast.success("Script executed successfully!");
       } else {
         setConsoleMessages(prev => [
           ...prev,
-          { text: "Script executed successfully!", type: 'success' }
+          { text: "Error executing script: " + result.message, type: 'error' }
         ]);
-        toast.success("Script executed successfully!");
+        toast.error("Script execution failed");
       }
-    }, 500);
+    } catch (error) {
+      // Handle execution errors
+      setConsoleMessages(prev => [
+        ...prev,
+        { text: "Error executing script: " + (error instanceof Error ? error.message : String(error)), type: 'error' }
+      ]);
+      toast.error("Script execution failed");
+    } finally {
+      setIsExecuting(false);
+    }
   };
 
   const handleClearConsole = () => {
     setConsoleMessages([]);
+    toast.info("Console cleared");
   };
 
   const handleSelectScript = (script: string) => {
@@ -96,7 +184,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-executor-dark">
-      <Header />
+      <Header onAttach={handleAttach} isAttached={isAttached} />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Mobile sidebar toggle */}
@@ -133,10 +221,15 @@ const Index = () => {
                 </button>
                 <button 
                   onClick={handleQuickExecute}
-                  className="bg-executor-dark flex flex-col items-center justify-center p-3 rounded-md hover:bg-opacity-80 transition-colors glow-effect"
+                  disabled={isExecuting || !isAttached}
+                  className={`bg-executor-dark flex flex-col items-center justify-center p-3 rounded-md transition-colors ${
+                    isExecuting || !isAttached ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-80 glow-effect'
+                  }`}
                 >
-                  <Play size={18} className="text-mocha-mauve mb-1" />
-                  <span className="text-executor-light text-xs">Execute</span>
+                  <Play size={18} className={`${isExecuting ? 'text-mocha-red' : 'text-mocha-mauve'} mb-1`} />
+                  <span className="text-executor-light text-xs">
+                    {isExecuting ? 'Executing...' : 'Execute'}
+                  </span>
                 </button>
                 <button 
                   onClick={() => setCurrentScript('-- Enter your Lua script here\n\n')}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Save, RefreshCw, Monitor, ChevronsUpDown, Zap, Volume2, Volume, Eye, EyeOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -10,30 +10,58 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
+interface Settings {
+  autoAttach: boolean;
+  topmostWindow: boolean;
+  unlockFps: boolean;
+  opacity: number;
+  executionSpeed: number;
+  muteConsole: boolean;
+  darkTheme: boolean;
+}
+
+const defaultSettings: Settings = {
+  autoAttach: true,
+  topmostWindow: false,
+  unlockFps: true,
+  opacity: 75,
+  executionSpeed: 50,
+  muteConsole: false,
+  darkTheme: true
+};
+
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
-  const [autoAttach, setAutoAttach] = useState(true);
-  const [topmostWindow, setTopmostWindow] = useState(false);
-  const [unlockFps, setUnlockFps] = useState(true);
-  const [opacity, setOpacity] = useState(75);
-  const [executionSpeed, setExecutionSpeed] = useState(50);
-  const [muteConsole, setMuteConsole] = useState(false);
-  const [darkTheme, setDarkTheme] = useState(true);
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('executor-settings');
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings({...defaultSettings, ...parsedSettings});
+      } catch (error) {
+        console.error('Failed to parse settings:', error);
+        setSettings(defaultSettings);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark-theme', settings.darkTheme);
+    document.documentElement.style.setProperty('--window-opacity', `${settings.opacity}%`);
+  }, [settings.darkTheme, settings.opacity]);
 
   if (!isOpen) return null;
 
   const handleSave = () => {
+    localStorage.setItem('executor-settings', JSON.stringify(settings));
+    applySettings(settings);
     toast.success("Settings saved successfully");
     onClose();
   };
 
   const handleReset = () => {
-    setAutoAttach(true);
-    setTopmostWindow(false);
-    setUnlockFps(true);
-    setOpacity(75);
-    setExecutionSpeed(50);
-    setMuteConsole(false);
-    setDarkTheme(true);
+    setSettings(defaultSettings);
     toast.info("Settings reset to default");
   };
 
@@ -42,6 +70,19 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
     if (value < 50) return "Normal";
     if (value < 75) return "Fast";
     return "Very Fast";
+  };
+
+  const applySettings = (settings: Settings) => {
+    document.documentElement.style.setProperty('--window-opacity', `${settings.opacity}%`);
+    document.documentElement.classList.toggle('dark-theme', settings.darkTheme);
+    
+    if (settings.muteConsole) {
+      console.log = function() {};
+    } else {
+      console.log = window.console.log;
+    }
+    
+    window.localStorage.setItem('execution-speed', settings.executionSpeed.toString());
   };
 
   return (
@@ -67,8 +108,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <span className="text-executor-light text-sm">Auto Attach</span>
                   </div>
                   <Switch 
-                    checked={autoAttach} 
-                    onCheckedChange={setAutoAttach} 
+                    checked={settings.autoAttach} 
+                    onCheckedChange={(value) => setSettings({...settings, autoAttach: value})} 
                     className="data-[state=checked]:bg-mocha-mauve"
                   />
                 </div>
@@ -78,8 +119,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <span className="text-executor-light text-sm">Topmost Window</span>
                   </div>
                   <Switch 
-                    checked={topmostWindow} 
-                    onCheckedChange={setTopmostWindow} 
+                    checked={settings.topmostWindow} 
+                    onCheckedChange={(value) => setSettings({...settings, topmostWindow: value})} 
                     className="data-[state=checked]:bg-mocha-mauve"
                   />
                 </div>
@@ -89,14 +130,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <span className="text-executor-light text-sm">Unlock FPS</span>
                   </div>
                   <Switch 
-                    checked={unlockFps} 
-                    onCheckedChange={setUnlockFps} 
+                    checked={settings.unlockFps} 
+                    onCheckedChange={(value) => setSettings({...settings, unlockFps: value})} 
                     className="data-[state=checked]:bg-mocha-mauve"
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {muteConsole ? (
+                    {settings.muteConsole ? (
                       <Volume className="text-mocha-red h-4 w-4" />
                     ) : (
                       <Volume2 className="text-mocha-green h-4 w-4" />
@@ -104,14 +145,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <span className="text-executor-light text-sm">Mute Console</span>
                   </div>
                   <Switch 
-                    checked={muteConsole} 
-                    onCheckedChange={setMuteConsole} 
+                    checked={settings.muteConsole} 
+                    onCheckedChange={(value) => setSettings({...settings, muteConsole: value})} 
                     className="data-[state=checked]:bg-mocha-mauve"
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {darkTheme ? (
+                    {settings.darkTheme ? (
                       <Eye className="text-mocha-lavender h-4 w-4" />
                     ) : (
                       <EyeOff className="text-mocha-lavender h-4 w-4" />
@@ -119,8 +160,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <span className="text-executor-light text-sm">Dark Theme</span>
                   </div>
                   <Switch 
-                    checked={darkTheme} 
-                    onCheckedChange={setDarkTheme} 
+                    checked={settings.darkTheme} 
+                    onCheckedChange={(value) => setSettings({...settings, darkTheme: value})} 
                     className="data-[state=checked]:bg-mocha-mauve"
                   />
                 </div>
@@ -133,13 +174,13 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-executor-light text-sm">Window Opacity</span>
-                    <span className="text-executor-light text-xs bg-executor-dark px-2 py-1 rounded">{opacity}%</span>
+                    <span className="text-executor-light text-xs bg-executor-dark px-2 py-1 rounded">{settings.opacity}%</span>
                   </div>
                   <Slider 
-                    value={[opacity]} 
+                    value={[settings.opacity]} 
                     max={100} 
                     step={5} 
-                    onValueChange={(value) => setOpacity(value[0])} 
+                    onValueChange={(value) => setSettings({...settings, opacity: value[0]})} 
                     className="py-2"
                   />
                 </div>
@@ -148,14 +189,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                   <div className="flex items-center justify-between">
                     <span className="text-executor-light text-sm">Execution Speed</span>
                     <span className="text-executor-light text-xs bg-executor-dark px-2 py-1 rounded">
-                      {getSpeedLabel(executionSpeed)}
+                      {getSpeedLabel(settings.executionSpeed)}
                     </span>
                   </div>
                   <Slider 
-                    value={[executionSpeed]} 
+                    value={[settings.executionSpeed]} 
                     max={100} 
                     step={1} 
-                    onValueChange={(value) => setExecutionSpeed(value[0])} 
+                    onValueChange={(value) => setSettings({...settings, executionSpeed: value[0]})} 
                     className="py-2"
                   />
                 </div>
