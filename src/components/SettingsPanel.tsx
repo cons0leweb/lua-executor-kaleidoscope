@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { X, Save, Refresh, Monitor, ChevronsUpDown, Zap, Volume2, Volume, Eye, EyeOff } from 'lucide-react';
+import { X, Save, RefreshCw, Monitor, ChevronsUpDown, Zap, Volume2, Volume, Eye, EyeOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
@@ -169,7 +168,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
               onClick={handleReset}
               className="px-4 py-2 bg-mocha-surface1 text-executor-light rounded-md hover:bg-mocha-surface2 transition-colors flex items-center gap-2"
             >
-              <Refresh size={16} />
+              <RefreshCw size={16} />
               Reset
             </button>
             <button 
