@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import CodeEditor from '@/components/CodeEditor';
@@ -8,13 +7,9 @@ import SettingsPanel from '@/components/SettingsPanel';
 import { Settings, Upload, Download, Play, FileText, Menu, X, Home, Info, Rocket } from 'lucide-react';
 import { toast } from "sonner";
 
-// Mock function to simulate actual script execution
-// In a real production environment, this would communicate with a Roblox API
 const executeRobloxScript = (script: string): Promise<{ success: boolean; message: string }> => {
   return new Promise((resolve) => {
-    // Simulate API call delay
     setTimeout(() => {
-      // Check for error keywords to simulate different execution results
       if (script.includes("error") || script.includes("fail")) {
         resolve({ 
           success: false, 
@@ -38,15 +33,12 @@ const Index = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [isAttached, setIsAttached] = useState(false);
 
-  // Check if auto-attach is enabled and attach on component mount
   useEffect(() => {
-    // Initialize console
     setConsoleMessages([
       { text: "Executor initialized successfully", type: 'info' },
       { text: "System ready", type: 'success' },
     ]);
 
-    // Load settings and check if auto-attach is enabled
     try {
       const savedSettings = localStorage.getItem('executor-settings');
       if (savedSettings) {
@@ -61,13 +53,11 @@ const Index = () => {
   }, []);
 
   const handleAttach = () => {
-    // Simulate attaching to Roblox
     setConsoleMessages(prev => [
       ...prev, 
       { text: "Attaching to Roblox...", type: 'info' }
     ]);
 
-    // Simulate a delay for attaching
     setTimeout(() => {
       setIsAttached(true);
       setConsoleMessages(prev => [
@@ -96,14 +86,12 @@ const Index = () => {
     setCurrentScript(code);
     setIsExecuting(true);
     
-    // Add execution message to console
     setConsoleMessages(prev => [
       ...prev, 
       { text: "Executing script...", type: 'info' }
     ]);
     
     try {
-      // Execute the script
       const result = await executeRobloxScript(code);
       
       if (result.success) {
@@ -120,7 +108,6 @@ const Index = () => {
         toast.error("Script execution failed");
       }
     } catch (error) {
-      // Handle execution errors
       setConsoleMessages(prev => [
         ...prev,
         { text: "Error executing script: " + (error instanceof Error ? error.message : String(error)), type: 'error' }
@@ -184,10 +171,9 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-executor-dark">
-      <Header onAttach={handleAttach} isAttached={isAttached} />
+      <Header />
       
       <div className="flex flex-1 overflow-hidden">
-        {/* Mobile sidebar toggle */}
         <button 
           className="md:hidden fixed top-16 left-0 z-10 p-2 m-2 bg-executor-secondary rounded-md border border-executor-purple border-opacity-30" 
           onClick={toggleSidebar}
@@ -195,7 +181,6 @@ const Index = () => {
           {isSidebarOpen ? <X size={20} className="text-executor-light" /> : <Menu size={20} className="text-executor-light" />}
         </button>
 
-        {/* Sidebar with script library */}
         <div className={`w-full md:w-80 bg-executor-secondary border-r border-executor-purple border-opacity-30 overflow-hidden transition-all duration-300 flex flex-col ${isSidebarOpen ? 'block absolute md:relative z-10 h-full md:h-auto' : 'hidden md:block'}`}>
           <div className="p-4 flex flex-col h-full overflow-hidden">
             <div className="mb-4">
@@ -247,7 +232,6 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Main editor area */}
         <div className={`flex-1 p-4 overflow-hidden ${isSidebarOpen ? 'hidden md:block' : 'block'}`}>
           <div className="grid grid-rows-[1fr,auto] gap-4 h-full">
             <CodeEditor onExecute={handleExecute} />
@@ -256,7 +240,6 @@ const Index = () => {
         </div>
       </div>
       
-      {/* Settings button (visible all times) */}
       <button 
         onClick={() => setIsSettingsOpen(true)}
         className="fixed bottom-4 right-4 bg-executor-purple p-3 rounded-full hover:bg-opacity-80 transition-colors shadow-lg glow-effect z-10"
