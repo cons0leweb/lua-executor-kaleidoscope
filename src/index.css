@@ -51,7 +51,7 @@
 
 /* Add some custom styling for the code editor */
 .code-editor {
-  font-family: "Fira Code", "Consolas", monospace;
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", monospace;
 }
 
 .executor-button {
@@ -80,8 +80,80 @@
 /* Glow effect for buttons */
 .glow-effect {
   box-shadow: 0 0 15px rgba(203, 166, 247, 0.5); /* Mocha Mauve with transparency */
+  transition: all 0.3s ease;
 }
 
 .glow-effect:hover {
   box-shadow: 0 0 20px rgba(245, 194, 231, 0.7); /* Mocha Pink with transparency */
+  transform: translateY(-1px);
+}
+
+/* Animation keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Shadow effects */
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(203, 166, 247, 0.5);
+}
+
+/* Custom transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Glass effect */
+.glass-effect {
+  background: rgba(30, 30, 46, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(203, 166, 247, 0.2);
+}
+
+/* Code highlighting */
+.lua-keyword {
+  color: #F5C2E7; /* Mocha Pink */
+}
+
+.lua-string {
+  color: #A6E3A1; /* Mocha Green */
+}
+
+.lua-number {
+  color: #F9E2AF; /* Mocha Yellow */
+}
+
+.lua-comment {
+  color: #6C7086; /* Mocha Overlay0 */
+  font-style: italic;
 }
