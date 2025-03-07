@@ -171,7 +171,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-executor-dark">
-      <Header />
+      <Header onAttach={handleAttach} isAttached={isAttached} />
       
       <div className="flex flex-1 overflow-hidden">
         <button 
