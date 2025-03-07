@@ -6,7 +6,7 @@ import ScriptLibrary from '@/components/ScriptLibrary';
 import Console from '@/components/Console';
 import SettingsPanel from '@/components/SettingsPanel';
 import { Settings, Upload, Download, Play, FileText, Menu, X } from 'lucide-react';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const Index = () => {
   const [consoleMessages, setConsoleMessages] = useState<{ text: string; type: 'info' | 'error' | 'success' }[]>([]);
