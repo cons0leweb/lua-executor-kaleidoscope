@@ -5,33 +5,34 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Catppuccin Mocha theme variables */
+    --background: 231 15% 15%;        /* #1E1E2E - Base */
+    --foreground: 227 70% 85%;        /* #CDD6F4 - Text */
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 231 15% 15%;              /* #1E1E2E - Base */
+    --card-foreground: 227 70% 85%;   /* #CDD6F4 - Text */
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 231 15% 15%;           /* #1E1E2E - Base */
+    --popover-foreground: 227 70% 85%; /* #CDD6F4 - Text */
 
-    --primary: 263 85% 63%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 267 85% 81%;           /* #CBA6F7 - Mauve */
+    --primary-foreground: 227 70% 85%; /* #CDD6F4 - Text */
 
-    --secondary: 217 33% 23%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 231 11% 23%;         /* #313244 - Surface0 */
+    --secondary-foreground: 227 70% 85%; /* #CDD6F4 - Text */
 
-    --muted: 217 33% 23%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 231 11% 23%;             /* #313244 - Surface0 */
+    --muted-foreground: 227 35% 70%;  /* #A6ADC8 - Subtext0 */
 
-    --accent: 263 70% 74%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 316 73% 86%;            /* #F5C2E7 - Pink */
+    --accent-foreground: 227 70% 85%; /* #CDD6F4 - Text */
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 343 81% 75%;       /* #F38BA8 - Red */
+    --destructive-foreground: 227 70% 85%; /* #CDD6F4 - Text */
 
-    --border: 217 33% 23%;
-    --input: 217 33% 23%;
-    --ring: 263 85% 63%;
+    --border: 232 14% 31%;            /* #45475A - Surface1 */
+    --input: 232 14% 31%;             /* #45475A - Surface1 */
+    --ring: 267 85% 81%;              /* #CBA6F7 - Mauve */
 
     --radius: 0.5rem;
   }
@@ -63,24 +64,24 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(45, 55, 72, 0.5);
+  background: rgba(49, 50, 68, 0.5); /* Mocha Surface0 with transparency */
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #8B5CF6;
+  background: #CBA6F7; /* Mocha Mauve */
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9B87F5;
+  background: #F5C2E7; /* Mocha Pink */
 }
 
 /* Glow effect for buttons */
 .glow-effect {
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px rgba(203, 166, 247, 0.5); /* Mocha Mauve with transparency */
 }
 
 .glow-effect:hover {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 0 20px rgba(245, 194, 231, 0.7); /* Mocha Pink with transparency */
 }

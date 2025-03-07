@@ -55,11 +55,40 @@ export default {
 				},
 				// Custom colors for Lua Executor
 				executor: {
-					dark: '#1A1F2C',
-					purple: '#8B5CF6',
-					light: '#F1F0FB',
-					secondary: '#2D3748',
-					accent: '#9b87f5',
+					dark: '#1E1E2E',       // Catppuccin Mocha Base
+					purple: '#CBA6F7',     // Catppuccin Mocha Mauve
+					light: '#CDD6F4',      // Catppuccin Mocha Text
+					secondary: '#313244',   // Catppuccin Mocha Surface0
+					accent: '#F5C2E7',      // Catppuccin Mocha Pink
+				},
+				// Catppuccin Mocha full palette
+				mocha: {
+					rosewater: '#F5E0DC',
+					flamingo: '#F2CDCD',
+					pink: '#F5C2E7',
+					mauve: '#CBA6F7',
+					red: '#F38BA8',
+					maroon: '#EBA0AC',
+					peach: '#FAB387',
+					yellow: '#F9E2AF',
+					green: '#A6E3A1',
+					teal: '#94E2D5',
+					sky: '#89DCEB',
+					sapphire: '#74C7EC',
+					blue: '#89B4FA',
+					lavender: '#B4BEFE',
+					text: '#CDD6F4',
+					subtext1: '#BAC2DE',
+					subtext0: '#A6ADC8',
+					overlay2: '#9399B2',
+					overlay1: '#7F849C',
+					overlay0: '#6C7086',
+					surface2: '#585B70',
+					surface1: '#45475A',
+					surface0: '#313244',
+					base: '#1E1E2E',
+					mantle: '#181825',
+					crust: '#11111B',
 				},
 			},
 			borderRadius: {
